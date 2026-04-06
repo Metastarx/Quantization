@@ -279,6 +279,8 @@ def main() -> None:
     if pending_count == 0:
         print("没有待发送消息")
     else:
+        flush_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        print(f"统一发送时间: {flush_time}")
         print(f"开始统一发送，共 {pending_count} 条消息...")
         send_result = SenderLayerQmsg.sender_layer_flush()
         print(f"[已发送] 合并消息 -> {send_result}")
