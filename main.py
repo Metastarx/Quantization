@@ -34,7 +34,7 @@ def main() -> None:
             if rec.get("strategy_result") is not None
             else float("-inf")
         ),
-        reverse=True,
+        reverse=False,
     )
 
     success_count = 0
