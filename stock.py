@@ -593,6 +593,10 @@ class StockData:
 
     @staticmethod
     def _annualize_with_previous_year_fill(yearly_quarter_values: Dict[int, Dict[int, float]]) -> Dict[int, float]:
+        """Annual metric rule for cashflow: Q4 uses full-year, otherwise use latest YTD.
+
+        This avoids over-extrapolating unfinished fiscal years using prior-year remainder.
+        """
         annual_values: Dict[int, float] = {}
         for y in sorted(yearly_quarter_values.keys()):
             q_map = yearly_quarter_values.get(y, {})
@@ -603,14 +607,7 @@ class StockData:
                 continue
             latest_q = max(q_map.keys())
             current_partial = float(q_map[latest_q])
-            prev_full = annual_values.get(y - 1)
-            prev_same_q = yearly_quarter_values.get(y - 1, {}).get(latest_q)
-            if prev_full is not None and prev_same_q is not None:
-                annual_values[y] = current_partial + (float(prev_full) - float(prev_same_q))
-            elif prev_full is not None:
-                annual_values[y] = float(prev_full)
-            else:
-                annual_values[y] = current_partial
+            annual_values[y] = current_partial
         return annual_values
 
     @staticmethod

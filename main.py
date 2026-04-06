@@ -162,7 +162,7 @@ def main() -> None:
                     header_text,
                     f"总分: {rec.get('total_score', rec['strategy_result'].total_score):.2f}",
                     (
-                        "分项得分: \n"
+                        "分项得分: "
                         f"PEPB分位估值={score_summary.get('valuation_score')}, "
                         f"价格区位={score_summary.get('price_position_score')}, "
                         f"股息利差={score_summary.get('dividend_spread_score')}, "
@@ -172,7 +172,7 @@ def main() -> None:
                         f"现金流分={score_summary.get('cash_score')}"
                     ),
                     (
-                        "原始值: \n"
+                        "原始值: "
                         f"当前股价={rec['current_price']}, "
                         f"PB={valuation_raw.get('current_pb')}, "
                         f"PE(TTM)={valuation_raw.get('current_pe_ttm')}, "
