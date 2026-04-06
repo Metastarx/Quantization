@@ -1,0 +1,8 @@
+pandas
+numpy
+requests
+pyyaml
+tushare
+akshare
+baostock
+tqdm
