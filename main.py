@@ -92,6 +92,7 @@ def main() -> None:
             score_items = rec.get("score_items", {})
             valuation_raw = score_items.get("valuation", {}).get("raw", {})
             dividend_raw = score_items.get("dividend_spread", {}).get("raw", {})
+            dividend_quality_raw = score_items.get("dividend_quality", {}).get("raw", {})
             position_raw = score_items.get("position", {}).get("raw", {})
             roe_raw = score_items.get("roe", {}).get("raw", {})
             cash_raw = score_items.get("cash", {}).get("raw", {})
@@ -111,6 +112,7 @@ def main() -> None:
                     "current_pe_ttm": valuation_raw.get("current_pe_ttm"),
                     "dividend_yield": dividend_raw.get("dividend_yield"),
                     "dividend_spread": dividend_raw.get("dividend_spread"),
+                    "dividend_quality_score": score_summary.get("dividend_quality_score"),
                     "holding_position_weight_pct": position_raw.get("holding_position_weight_pct"),
                     "roe": roe_raw.get("roe"),
                     "cash_score": score_summary.get("cash_score"),
@@ -133,7 +135,8 @@ def main() -> None:
                     "category": score_summary.get("category"),
                     "is_financial": score_summary.get("is_financial"),
                     "valuation": 0.30,
-                    "dividend_spread": 0.30,
+                    "dividend_spread": 0.20,
+                    "dividend_quality": 0.10,
                     "price_position": 0.20,
                     "position": 0.10,
                     "roe": 0.10 if score_summary.get("is_financial") else 0.50,
@@ -144,6 +147,7 @@ def main() -> None:
                 "score_contributions": {
                     "weighted_valuation": details.get("weighted_valuation"),
                     "weighted_dividend_spread": details.get("weighted_dividend_spread"),
+                    "weighted_dividend_quality": details.get("weighted_dividend_quality"),
                     "weighted_price_position": details.get("weighted_price_position"),
                     "weighted_position": details.get("weighted_position"),
                     "weighted_roe": details.get("weighted_roe"),
@@ -158,16 +162,17 @@ def main() -> None:
                     header_text,
                     f"总分: {rec.get('total_score', rec['strategy_result'].total_score):.2f}",
                     (
-                        "分项得分: "
+                        "分项得分: \n"
                         f"PEPB分位估值={score_summary.get('valuation_score')}, "
-                        f"股息利差={score_summary.get('dividend_spread_score')}, "
                         f"价格区位={score_summary.get('price_position_score')}, "
+                        f"股息利差={score_summary.get('dividend_spread_score')}, "
+                        f"分红质量分={score_summary.get('dividend_quality_score')}, "
                         f"仓位={score_summary.get('position_score')}, "
                         f"ROE质量分={score_summary.get('roe_score')}, "
                         f"现金流分={score_summary.get('cash_score')}"
                     ),
                     (
-                        "原始值: "
+                        "原始值: \n"
                         f"当前股价={rec['current_price']}, "
                         f"PB={valuation_raw.get('current_pb')}, "
                         f"PE(TTM)={valuation_raw.get('current_pe_ttm')}, "
@@ -241,7 +246,8 @@ def main() -> None:
         "scoring_formula": {
             "financial": {
                 "valuation": "valuation_score * 0.30",
-                "dividend_spread": "dividend_score * 0.30",
+                    "dividend_spread": "dividend_score * 0.20",
+                    "dividend_quality": "dividend_quality_score * 0.10",
                 "price_position": "price_position_score * 0.20",
                 "position": "position_score * 0.10",
                 "roe": "roe_score * 0.10",
@@ -249,7 +255,8 @@ def main() -> None:
             },
             "non_financial": {
                 "valuation": "valuation_score * 0.30",
-                "dividend_spread": "dividend_score * 0.30",
+                    "dividend_spread": "dividend_score * 0.20",
+                    "dividend_quality": "dividend_quality_score * 0.10",
                 "price_position": "price_position_score * 0.20",
                 "position": "position_score * 0.10",
                 "roe": "roe_score * 0.50",

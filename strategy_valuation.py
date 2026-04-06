@@ -17,6 +17,7 @@ class StrategyResult:
     stock: str
     valuation_score: float
     dividend_spread_score: float
+    dividend_quality_score: float
     price_position_score: float
     position_score: float
     roe_score: float
@@ -304,6 +305,8 @@ class StrategyValuation:
         category = str(raw_data.get("category", "")).strip()
         cash_score_raw = raw_data.get("cash_score", np.nan)
         cash_score = float(cash_score_raw) if pd.notna(cash_score_raw) else np.nan
+        dividend_quality_raw = raw_data.get("dividend_quality_score", 0.0)
+        dividend_quality_score = float(dividend_quality_raw) if pd.notna(dividend_quality_raw) else 0.0
 
         valuation_score, valuation_details = StrategyValuation._calc_valuation_score(
             hist_df,
@@ -337,39 +340,45 @@ class StrategyValuation:
             # 金融: 旧五因子；非金融: 在原公式基础上增加 roe*0.5 + cash*0.5。
             base_total = (
             valuation_score * 0.30
-            + dividend_score * 0.30
-            + price_position_score * 0.20
+            + price_position_score * 0.15
+            + dividend_score * 0.20
+            + dividend_quality_score * 0.10
             + position_score * 0.10
-            + roe_score * 0.10
+            + roe_score * 0.15
             )
             weighted_roe = roe_score * 0.10
             weighted_cash = np.nan
+            weighted_dividend_quality = dividend_quality_score * 0.10
             total_score = base_total
-            score_formula = "financial_base_formula"
+            score_formula = "financial_dividend_split_formula"
         else:
-            weighted_roe = roe_score * 0.05
+            weighted_roe = roe_score * 0.1
             weighted_cash = (cash_score * 0.05) if pd.notna(cash_score) else 0.0
+            weighted_dividend_quality = dividend_quality_score * 0.10
             total_score = (
                 valuation_score * 0.30
-                + dividend_score * 0.30
-                + price_position_score * 0.20
+                + price_position_score * 0.15
+                + dividend_score * 0.20
+                + weighted_dividend_quality
                 + position_score * 0.10
                 + weighted_roe
                 + weighted_cash
             )
 
-            score_formula = "non_financial_base_plus_roe0.5_cash0.5"
+            score_formula = "non_financial_dividend_split_formula"
 
         details: Dict[str, float] = {}
         details["score_valuation"] = round(valuation_score, 4)
         details["score_dividend_spread"] = round(dividend_score, 4)
+        details["score_dividend_quality"] = round(dividend_quality_score, 4)
         details["score_price_position"] = round(price_position_score, 4)
         details["score_position"] = round(position_score, 4)
         details["score_roe"] = round(roe_score, 4)
         details["score_cash"] = round(cash_score, 4) if pd.notna(cash_score) else np.nan
 
         details["weighted_valuation"] = round(valuation_score * 0.30, 4)
-        details["weighted_dividend_spread"] = round(dividend_score * 0.30, 4)
+        details["weighted_dividend_spread"] = round(dividend_score * 0.20, 4)
+        details["weighted_dividend_quality"] = round(weighted_dividend_quality, 4)
         details["weighted_price_position"] = round(price_position_score * 0.20, 4)
         details["weighted_position"] = round(position_score * 0.10, 4)
         details["weighted_roe"] = round(weighted_roe, 4)
@@ -384,6 +393,7 @@ class StrategyValuation:
         details.update(price_details)
         details.update(position_details)
         details.update(roe_details)
+        details.update(raw_data.get("dividend_quality_details", {}))
         details.update(raw_data.get("cash_details", {}))
 
         details["roe_source"] = raw_data["roe_source"]
@@ -393,6 +403,7 @@ class StrategyValuation:
             stock=symbol,
             valuation_score=round(valuation_score, 4),
             dividend_spread_score=round(dividend_score, 4),
+            dividend_quality_score=round(dividend_quality_score, 4),
             price_position_score=round(price_position_score, 4),
             position_score=round(position_score, 4),
             roe_score=round(roe_score, 4),
@@ -519,6 +530,18 @@ class StrategyValuation:
                     "score": result.details.get("score_dividend_spread"),
                     "weighted": result.details.get("weighted_dividend_spread"),
                 },
+                "dividend_quality": {
+                    "raw": {
+                        "dividend_quality_cv": result.details.get("dividend_quality_cv"),
+                        "dividend_quality_g": result.details.get("dividend_quality_g"),
+                        "dividend_quality_avg_old": result.details.get("dividend_quality_avg_old"),
+                        "dividend_quality_avg_new": result.details.get("dividend_quality_avg_new"),
+                        "dividend_quality_missing_years": result.details.get("dividend_quality_missing_years"),
+                        "dividend_quality_error": result.details.get("dividend_quality_error"),
+                    },
+                    "score": result.details.get("score_dividend_quality"),
+                    "weighted": result.details.get("weighted_dividend_quality"),
+                },
                 "price_position": {
                     "raw": {
                         "30d_position_pct": result.details.get("30d_position_pct"),
@@ -574,6 +597,7 @@ class StrategyValuation:
             rec["score_summary"] = {
                 "valuation_score": result.valuation_score,
                 "dividend_spread_score": result.dividend_spread_score,
+                "dividend_quality_score": result.dividend_quality_score,
                 "price_position_score": result.price_position_score,
                 "position_score": result.position_score,
                 "roe_score": result.roe_score,

@@ -1,67 +1,20 @@
 # -*- coding: utf-8 -*-
 """
-独立脚本: 计算 600795 的自由现金流指数 (FCF Score)。
-不依赖项目内业务模块，直接抓取公开行情/财报数据并计算。
+独立脚本: 计算 600795 的分红质量分 (dividend_quality_score)。
+不依赖项目内业务模块，直接抓取公开财报/分红数据并计算。
 """
 
 from __future__ import annotations
 
 import json
-import os
 import re
-import time
-import urllib.parse
-import urllib.request
 from datetime import datetime
 from pathlib import Path
-from typing import Dict, Optional, Tuple
+from typing import Dict, Optional
 
 import akshare as ak
+import numpy as np
 import pandas as pd
-
-
-DEBUG_PRINT_TABLE = True
-
-
-def _clear_proxy_env() -> None:
-    for key in [
-        "HTTP_PROXY", "HTTPS_PROXY", "ALL_PROXY",
-        "http_proxy", "https_proxy", "all_proxy",
-    ]:
-        os.environ.pop(key, None)
-
-
-def _http_get(url: str, timeout: int = 10) -> str:
-    _clear_proxy_env()
-    req = urllib.request.Request(
-        url,
-        headers={
-            "User-Agent": (
-                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-                "AppleWebKit/537.36 (KHTML, like Gecko) "
-                "Chrome/124.0.0.0 Safari/537.36"
-            )
-        },
-    )
-
-    last_err = None
-    raw = b""
-    for i in range(3):
-        try:
-            with urllib.request.urlopen(req, timeout=timeout) as resp:
-                raw = resp.read()
-            last_err = None
-            break
-        except Exception as exc:
-            last_err = exc
-            time.sleep(1 + i)
-    if last_err is not None:
-        raise last_err
-    try:
-        return raw.decode("gbk", errors="ignore")
-    except Exception:
-        return raw.decode("utf-8", errors="ignore")
-
 
 def _normalize_col_name(name: str) -> str:
     return re.sub(r"\s+", "", str(name))
@@ -78,48 +31,17 @@ def _resolve_column(df: pd.DataFrame, candidates: list[str]) -> str:
 
 def _save_result_json(payload: dict, output_dir: str = "outputs") -> str:
     ts = datetime.now().strftime("%Y%m%d_%H%M%S")
-    path = Path(output_dir) / f"fcf_score_600795_{ts}.json"
+    path = Path(output_dir) / f"dividend_quality_600795_{ts}.json"
     path.parent.mkdir(parents=True, exist_ok=True)
     with path.open("w", encoding="utf-8") as f:
         json.dump(payload, f, ensure_ascii=False, indent=2)
     return str(path)
 
 
-def fetch_quote_and_market_cap(symbol: str) -> Tuple[str, str, float, float]:
-    if symbol.startswith(("6", "9")):
-        code = f"sh{symbol}"
-    else:
-        code = f"sz{symbol}"
-
-    url = f"https://qt.gtimg.cn/q={code}"
-    text = _http_get(url)
-    payload = text.strip()
-
-    # 示例: v_sh600795="1~国电电力~600795~4.76~...~848.98~848.98~...";
-    m = re.search(r'="([^"]+)"', payload)
-    if not m:
-        raise RuntimeError(f"腾讯行情返回格式异常: {payload[:120]}")
-
-    parts = m.group(1).split("~")
-    if len(parts) < 46:
-        raise RuntimeError(f"腾讯行情字段不足: count={len(parts)}")
-
-    name = parts[1].strip() or symbol
-    price = float(parts[3])
-    # 腾讯返回的总市值通常是“亿元”。
-    market_cap = float(parts[44]) * 100_000_000.0
-
-    if price <= 0 or market_cap <= 0:
-        raise RuntimeError(f"腾讯行情价格或总市值无效: price={price}, market_cap={market_cap}")
-
-    return code, name, price, market_cap
-
-
 def _extract_div_per_share_from_plan_text(plan_text: str) -> Optional[float]:
     if not plan_text:
         return None
     text = str(plan_text).strip()
-    # 示例: "10派1.5元(含税)" -> 每股 0.15
     m = re.search(r"(\d+(?:\.\d+)?)\s*派\s*(\d+(?:\.\d+)?)\s*元", text)
     if not m:
         return None
@@ -127,12 +49,13 @@ def _extract_div_per_share_from_plan_text(plan_text: str) -> Optional[float]:
     amount = float(m.group(2))
     if base <= 0:
         return None
-    return amount / base
+    per_share = amount / base
+    return per_share if per_share >= 0 else None
 
 
-def fetch_annual_cash_dividend_total(symbol: str, total_shares_estimate: float) -> Dict[int, float]:
-    """按分红方案估算年度现金分红总额（元）。"""
-    annual_total: Dict[int, float] = {}
+def fetch_annual_dividend_per_share(symbol: str) -> Dict[int, float]:
+    """优先用分红方案提取每股分红；失败时用历史分红明细兜底。"""
+    annual_div: Dict[int, float] = {}
 
     try:
         div_df = ak.stock_dividend_cninfo(symbol=symbol)
@@ -148,17 +71,15 @@ def fetch_annual_cash_dividend_total(symbol: str, total_shares_estimate: float) 
             temp[report_col] = temp[report_col].astype(str).str.strip()
             temp = temp.dropna(subset=["div_per_share"])
             if not temp.empty:
-                # 兼容 "2024年报"、"2024中报" 等，统一提取年份。
                 temp["year"] = temp[report_col].str.extract(r"(\d{4})", expand=False)
                 temp = temp.dropna(subset=["year"])
                 temp["year"] = temp["year"].astype(int)
                 grouped = temp.groupby("year", as_index=False)["div_per_share"].sum()
                 for row in grouped.itertuples(index=False):
                     y = int(row.year)
-                    annual_total[y] = float(row.div_per_share) * total_shares_estimate
+                    annual_div[y] = float(row.div_per_share)
 
-    # 兜底：若 cninfo 没拿到，则尝试历史分红明细（按除权除息日年份汇总）。
-    if not annual_total:
+    if not annual_div:
         try:
             detail_df = ak.stock_history_dividend_detail(symbol=symbol, indicator="分红")
         except Exception:
@@ -174,215 +95,225 @@ def fetch_annual_cash_dividend_total(symbol: str, total_shares_estimate: float) 
                 temp = temp.dropna(subset=[date_col, cash_col])
                 if not temp.empty:
                     temp["year"] = temp[date_col].dt.year.astype(int)
-                    # "派息"通常是每10股派息。
                     temp["div_per_share"] = temp[cash_col] / 10.0
                     grouped = temp.groupby("year", as_index=False)["div_per_share"].sum()
                     for row in grouped.itertuples(index=False):
                         y = int(row.year)
-                        annual_total[y] = float(row.div_per_share) * total_shares_estimate
+                        annual_div[y] = float(row.div_per_share)
 
-    return annual_total
-
-
-def _score_linear(value: float, low_zero: float, high_full: float) -> float:
-    if value <= low_zero:
-        return 0.0
-    if value >= high_full:
-        return 100.0
-    return (value - low_zero) / (high_full - low_zero) * 100.0
+    return annual_div
 
 
 def _to_stock_code_for_sina(symbol: str) -> str:
     return f"sh{symbol}" if symbol.startswith(("6", "9")) else f"sz{symbol}"
 
 
-def _annualize_with_previous_year_fill(
-    yearly_quarter_values: Dict[int, Dict[int, float]],
-) -> Dict[int, float]:
-    """
-    年化规则:
-    - 有Q4: 直接用Q4(全年)
-    - 无Q4: 当年已披露 + (上年全年 - 上年同期)
-    - 若缺上年同期但有上年全年: 用上年全年兜底
-    - 否则: 用当年已披露兜底
-    """
-    annual_values: Dict[int, float] = {}
-
-    for y in sorted(yearly_quarter_values.keys()):
-        q_map = yearly_quarter_values.get(y, {})
-        if not q_map:
-            continue
-
-        if 4 in q_map:
-            annual_values[y] = float(q_map[4])
-            continue
-
-        latest_q = max(q_map.keys())
-        current_partial = float(q_map[latest_q])
-
-        prev_full = annual_values.get(y - 1)
-        prev_same_q = yearly_quarter_values.get(y - 1, {}).get(latest_q)
-
-        if prev_full is not None and prev_same_q is not None:
-            annual_values[y] = current_partial + (float(prev_full) - float(prev_same_q))
-        elif prev_full is not None:
-            annual_values[y] = float(prev_full)
-        else:
-            annual_values[y] = current_partial
-
-    return annual_values
-
-
-def fetch_annual_cashflow_metrics(symbol: str, total_shares_estimate: float) -> Dict[int, Dict[str, float]]:
+def fetch_annual_eps(symbol: str) -> Dict[int, float]:
+    """从利润表提取每年的基本每股收益(EPS)。"""
     stock_code = _to_stock_code_for_sina(symbol)
-    df = ak.stock_financial_report_sina(stock=stock_code, symbol="现金流量表")
+    df = ak.stock_financial_report_sina(stock=stock_code, symbol="利润表")
     if df is None or df.empty:
-        raise RuntimeError("现金流量表为空")
+        raise RuntimeError("利润表为空")
 
-    # if DEBUG_PRINT_TABLE:
-    #     print(f"原始现金流量表数据行数: {len(df)}, 列数: {len(df.columns)}")
-    #     print("完整列名清单:")
-    #     for i, col in enumerate(df.columns.tolist(), start=1):
-    #         print(f"{i:02d}. {col}")
-    #     print("前5行(完整显示，不截断):")
-    #     with pd.option_context(
-    #         "display.max_columns", None,
-    #         "display.width", 5000,
-    #         "display.max_colwidth", None,
-    #     ):
-    #         print(df.head(5).to_string(index=False))
+    date_col = _resolve_column(df, ["报告日"])
+    eps_col = _resolve_column(df, ["基本每股收益", "基本每股收益(元/股)", "一、基本每股收益"])
 
-    required = {
-        "date": _resolve_column(df, ["报告日"]),
-        "cfo": _resolve_column(df, ["经营活动产生的现金流量净额"]),
-        "capex": _resolve_column(df, ["购建固定资产、无形资产和其他长期资产所支付的现金"]),
-    }
+    temp = df[[date_col, eps_col]].copy()
+    temp[date_col] = pd.to_datetime(temp[date_col], errors="coerce")
+    temp[eps_col] = pd.to_numeric(temp[eps_col], errors="coerce")
+    temp = temp.dropna(subset=[date_col, eps_col])
+    temp["year"] = temp[date_col].dt.year.astype(int)
+    temp["month"] = temp[date_col].dt.month.astype(int)
 
-    temp = df[[required["date"], required["cfo"], required["capex"]]].copy()
-    
-    print(temp.head(10))  # 调试：查看提取的关键列数据
-    
-    temp[required["date"]] = pd.to_datetime(temp[required["date"]], errors="coerce")
-    temp[required["cfo"]] = pd.to_numeric(temp[required["cfo"]], errors="coerce")
-    temp[required["capex"]] = pd.to_numeric(temp[required["capex"]], errors="coerce")
-    temp = temp.dropna(subset=[required["date"]])
-    temp = temp.sort_values(required["date"]).drop_duplicates(subset=[required["date"]], keep="last")
+    # 优先使用年报(12月)，若缺失则退化为当年最后一条。
+    annual_pref = temp[temp["month"] == 12].copy()
+    if annual_pref.empty:
+        annual_pref = temp.copy()
+    annual_pref = annual_pref.sort_values(date_col).drop_duplicates(subset=["year"], keep="last")
 
-    temp["year"] = temp[required["date"]].dt.year.astype(int)
-    temp["quarter"] = ((temp[required["date"]].dt.month - 1) // 3 + 1).astype(int)
-
-    cfo_q: Dict[int, Dict[int, float]] = {}
-    capex_q: Dict[int, Dict[int, float]] = {}
-
-    for _, row in temp.iterrows():
-        y = int(row["year"])
-        q = int(row["quarter"])
-        cfo_q.setdefault(y, {})[q] = float(row[required["cfo"]]) if pd.notna(row[required["cfo"]]) else 0.0
-        capex_q.setdefault(y, {})[q] = float(row[required["capex"]]) if pd.notna(row[required["capex"]]) else 0.0
-
-    cfo_annual = _annualize_with_previous_year_fill(cfo_q)
-    capex_annual = _annualize_with_previous_year_fill(capex_q)
-    div_annual = fetch_annual_cash_dividend_total(symbol, total_shares_estimate)
-
-    years = sorted(set(cfo_annual.keys()) | set(capex_annual.keys()))
-    result: Dict[int, Dict[str, float]] = {}
-    for y in years:
-        cfo = float(cfo_annual.get(y, 0.0))
-        capex = float(capex_annual.get(y, 0.0))
-        cash_div = float(div_annual.get(y, 0.0))
-        fcf = cfo - capex
-        result[y] = {
-            "cfo": cfo,
-            "capex": capex,
-            "cash_div": cash_div,
-            "fcf": fcf,
-        }
+    result: Dict[int, float] = {}
+    for row in annual_pref.itertuples(index=False):
+        year = int(getattr(row, "year"))
+        eps = float(getattr(row, eps_col))
+        result[year] = eps
     return result
+
+
+def _calc_stability_score(div_series_10y: list[float]) -> tuple[float, float]:
+    arr = np.array(div_series_10y, dtype=float)
+    avg = float(np.mean(arr))
+    std = float(np.std(arr, ddof=0))
+
+    if avg <= 0:
+        return 0.0, np.inf
+
+    cv = std / avg
+    if cv <= 0.20:
+        score = 100.0
+    elif cv >= 1.00:
+        score = 0.0
+    else:
+        score = (1.0 - (cv - 0.20) / (1.00 - 0.20)) * 100.0
+    return float(max(0.0, min(100.0, score))), float(cv)
+
+
+def _calc_growth_score(div_series: list[float]) -> tuple[float, float, float, float, int, int]:
+    n = len(div_series)
+    if n <= 1:
+        avg_only = float(div_series[0]) if n == 1 else 0.0
+        return 50.0, 0.0, avg_only, avg_only, n, n
+
+    split = n // 2
+    old = np.array(div_series[:split], dtype=float)
+    new = np.array(div_series[split:], dtype=float)
+    avg_old = float(np.mean(old))
+    avg_new = float(np.mean(new))
+
+    if avg_old <= 0:
+        g = 1.0 if avg_new > 0 else 0.0
+    else:
+        g = (avg_new - avg_old) / avg_old
+
+    if g <= -0.30:
+        score = 0.0
+    elif g >= 0.50:
+        score = 100.0
+    else:
+        score = ((g + 0.30) / 0.80) * 100.0
+
+    return float(max(0.0, min(100.0, score))), float(g), avg_old, avg_new, len(old), len(new)
+
+
+def _calc_payout_safety_score(
+    payout_ratios_pct: list[Optional[float]],
+    missing_years_count: int,
+) -> tuple[float, int]:
+    n_over = 0
+    for p in payout_ratios_pct:
+        if p is not None and p > 95.0:
+            n_over += 1
+
+    # 缺失年份视为分红质量风险，计入超阈值年份。
+    n_over += int(missing_years_count)
+
+    if n_over == 0:
+        score = 100.0
+    elif n_over == 1:
+        score = 70.0
+    elif n_over == 2:
+        score = 40.0
+    else:
+        score = 0.0
+
+    return score, n_over
 
 
 def main() -> None:
     symbol = "600795"
-    _clear_proxy_env()
+    div_per_share_map = fetch_annual_dividend_per_share(symbol)
+    eps_map = fetch_annual_eps(symbol)
 
-    secid, name, price, market_cap = fetch_quote_and_market_cap(symbol)
-    total_shares_estimate = market_cap / price if price > 0 else 0.0
-    annual = fetch_annual_cashflow_metrics(symbol, total_shares_estimate)
-    if not annual:
-        raise RuntimeError("未拿到可用的年化现金流数据")
+    if not div_per_share_map:
+        raise RuntimeError("未拿到分红数据")
 
-    years = sorted(annual.keys())
-    latest_year = years[-1]
-    latest = annual[latest_year]
+    all_div_years = sorted(div_per_share_map.keys())
 
-    # Score1: FCF Yield
-    fcf_yield_pct = latest["fcf"] / market_cap * 100.0 if market_cap > 0 else 0.0
-    score1 = _score_linear(fcf_yield_pct, 0.0, 8.0)
+    def _payout_ratio_for_year(y: int) -> Optional[float]:
+        dps = float(div_per_share_map.get(y, 0.0))
+        eps = eps_map.get(y)
+        if eps is None or eps <= 0:
+            return None
+        return float(dps / eps * 100.0)
 
-    # Score2: FCF cover of cash dividend
-    cash_div = latest["cash_div"]
-    if cash_div > 0:
-        cover = latest["fcf"] / cash_div
-        score2 = _score_linear(cover, 0.0, 2.0)
+    years_with_valid_payout = [y for y in all_div_years if _payout_ratio_for_year(y) is not None]
+    if years_with_valid_payout:
+        latest_year = max(years_with_valid_payout)
     else:
-        cover = float("inf") if latest["fcf"] > 0 else 0.0
-        score2 = 100.0 if latest["fcf"] > 0 else 0.0
+        latest_year = max(all_div_years)
 
-    # Score3: stability in recent 3 years
-    last3_years = years[-3:]
-    positive_count = sum(1 for y in last3_years if annual[y]["fcf"] > 0)
-    score3 = positive_count / 3.0 * 100.0
+    earliest_year = min(all_div_years)
+    start_year = max(earliest_year, latest_year - 9)
+    years_used = list(range(start_year, latest_year + 1))
+    if not years_used:
+        raise RuntimeError("没有可用于计算的年度分红数据")
 
-    fcf_score = score1 * 0.40 + score2 * 0.40 + score3 * 0.20
+    missing_years = [y for y in years_used if y not in div_per_share_map]
+    div_series: list[float] = [float(div_per_share_map.get(y, 0.0)) for y in years_used]
+    payout_ratios_pct: list[Optional[float]] = [_payout_ratio_for_year(y) for y in years_used]
 
-    print(f"股票: {symbol} {name} ({secid})")
-    print(f"当前价格: {price:.4f}")
-    print(f"总市值: {market_cap:.2f}")
+    stability_score, cv = _calc_stability_score(div_series)
+    growth_score, g, avg_old, avg_new, old_n, new_n = _calc_growth_score(div_series)
+    payout_safety_score, n_over = _calc_payout_safety_score(
+        payout_ratios_pct,
+        missing_years_count=len(missing_years),
+    )
+
+    dividend_quality_score = (
+        stability_score * 0.40
+        + growth_score * 0.30
+        + payout_safety_score * 0.30
+    )
+
+    print(f"股票: {symbol}")
     print("-" * 70)
-    print("近三年年化现金流(含缺失季度按上年补齐):")
-    for y in last3_years:
-        row = annual[y]
+    print(f"用于计算的年份: {years_used[0]}-{years_used[-1]} (共{len(years_used)}年, 最多年取10年)")
+    if missing_years:
+        print(f"缺失年份(按0分红计入并扣分): {missing_years}")
+    print("每股分红与分红支付率(缺失/<=0 EPS 记为 N/A):")
+    for y, dps, payout in zip(years_used, div_series, payout_ratios_pct):
+        payout_txt = "N/A" if payout is None else f"{payout:.2f}%"
         print(
-            f"{y}: CFO={row['cfo']:.2f}, CAPEX={row['capex']:.2f}, "
-            f"FCF={row['fcf']:.2f}, CashDiv={row['cash_div']:.2f}"
+            f"{y}: DPS={dps:.4f}, PayoutRatio={payout_txt}"
         )
 
     print("-" * 70)
-    print(f"Score1(FCF Yield): {score1:.4f} (FCF Yield={fcf_yield_pct:.4f}%)")
-    if cash_div > 0:
-        print(f"Score2(Cover): {score2:.4f} (Cover={cover:.4f})")
-    else:
-        print(f"Score2(Cover): {score2:.4f} (CashDiv<=0, cover按规则处理)")
-    print(f"Score3(Stability): {score3:.4f} (近3年FCF为正年数={positive_count})")
-    print(f"FCF_Score: {fcf_score:.4f}")
+    print(f"StabilityScore: {stability_score:.4f} (CV={cv if np.isfinite(cv) else float('inf'):.6f})")
+    print(
+        f"GrowthScore: {growth_score:.4f} "
+        f"(g={g:.6f}, avg_old={avg_old:.6f}[{old_n}年], avg_new={avg_new:.6f}[{new_n}年])"
+    )
+    print(
+        f"PayoutSafetyScore: {payout_safety_score:.4f} "
+        f"(n_over_threshold_or_missing={n_over}, missing_years={len(missing_years)})"
+    )
+    print(f"DividendQualityScore: {dividend_quality_score:.4f}")
 
     payload = {
         "symbol": symbol,
-        "name": name,
-        "market": secid,
-        "current_price": round(price, 6),
-        "market_cap": round(market_cap, 2),
         "latest_year": latest_year,
-        "latest_year_metrics": latest,
-        "last3_years": last3_years,
-        "annual_metrics": annual,
-        "scores": {
-            "score1_fcf_yield": round(score1, 4),
-            "score2_cover": round(score2, 4),
-            "score3_stability": round(score3, 4),
-            "fcf_score": round(fcf_score, 4),
+        "years_used": years_used,
+        "years_used_count": len(years_used),
+        "missing_years": missing_years,
+        "missing_years_count": len(missing_years),
+        "annual_dividend_per_share": {str(y): round(div_per_share_map.get(y, 0.0), 6) for y in years_used},
+        "annual_eps": {str(y): (round(eps_map.get(y, 0.0), 6) if eps_map.get(y) is not None else None) for y in years_used},
+        "annual_payout_ratio_pct": {
+            str(y): (None if p is None else round(float(p), 6))
+            for y, p in zip(years_used, payout_ratios_pct)
         },
-        "raw_ratios": {
-            "fcf_yield_pct": round(fcf_yield_pct, 6),
-            "cover": None if cover == float("inf") else round(float(cover), 6),
-            "positive_fcf_years_in_last3": positive_count,
+        "sub_scores": {
+            "stability_score": round(stability_score, 4),
+            "growth_score": round(growth_score, 4),
+            "payout_safety_score": round(payout_safety_score, 4),
+        },
+        "dividend_quality_score": round(dividend_quality_score, 4),
+        "raw_metrics": {
+            "cv": None if not np.isfinite(cv) else round(cv, 6),
+            "g": round(g, 6),
+            "avg_old": round(avg_old, 6),
+            "avg_new": round(avg_new, 6),
+            "old_window_years": old_n,
+            "new_window_years": new_n,
+            "n_over_threshold_or_missing": int(n_over),
         },
         "formula": {
-            "score1": "FCFYield<=0:0, >=8:100, else FCFYield/8*100",
-            "score2": "Cover<=0:0, >=2:100, else Cover/2*100",
-            "score3": "近3年FCF为正年数/3*100",
-            "fcf_score": "score1*0.4 + score2*0.4 + score3*0.2",
+            "stability_score": "CV<=0.20:100; CV>=1.00:0; else (1-(CV-0.20)/(1.00-0.20))*100",
+            "growth_score": "g<=-0.30:0; g>=0.50:100; else (g+0.30)/0.80*100",
+            "payout_safety_score": "n_over(>95%)+missing_years; n=0:100; n=1:70; n=2:40; n>=3:0",
+            "dividend_quality_score": "stability*0.40 + growth*0.30 + payout_safety*0.30",
         },
     }
+
     saved = _save_result_json(payload)
     print(f"结果JSON已保存: {saved}")
 

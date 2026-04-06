@@ -360,6 +360,189 @@ class StockData:
         return amount / base
 
     @staticmethod
+    def _fetch_annual_dividend_per_share(symbol: str) -> Dict[int, float]:
+        annual_div: Dict[int, float] = {}
+
+        try:
+            div_df = ak.stock_dividend_cninfo(symbol=symbol)
+        except Exception:
+            div_df = None
+
+        if div_df is not None and not div_df.empty:
+            text_col = "实施方案分红说明" if "实施方案分红说明" in div_df.columns else None
+            report_col = "报告时间" if "报告时间" in div_df.columns else None
+            if text_col and report_col:
+                temp = div_df.copy()
+                temp["div_per_share"] = temp[text_col].apply(StockData._extract_div_per_share_from_plan_text)
+                temp[report_col] = temp[report_col].astype(str).str.strip()
+                temp = temp.dropna(subset=["div_per_share"])
+                if not temp.empty:
+                    temp["year"] = temp[report_col].str.extract(r"(\d{4})", expand=False)
+                    temp = temp.dropna(subset=["year"])
+                    temp["year"] = temp["year"].astype(int)
+                    grouped = temp.groupby("year", as_index=False)["div_per_share"].sum()
+                    for row in grouped.itertuples(index=False):
+                        annual_div[int(row.year)] = float(row.div_per_share)
+
+        if not annual_div:
+            try:
+                detail_df = ak.stock_history_dividend_detail(symbol=symbol, indicator="分红")
+            except Exception:
+                detail_df = None
+            if detail_df is not None and not detail_df.empty:
+                date_col = "除权除息日" if "除权除息日" in detail_df.columns else None
+                cash_col = "派息" if "派息" in detail_df.columns else None
+                if date_col and cash_col:
+                    temp = detail_df.copy()
+                    temp[date_col] = pd.to_datetime(temp[date_col], errors="coerce")
+                    temp[cash_col] = pd.to_numeric(temp[cash_col], errors="coerce")
+                    temp = temp.dropna(subset=[date_col, cash_col])
+                    if not temp.empty:
+                        temp["year"] = temp[date_col].dt.year.astype(int)
+                        temp["div_per_share"] = temp[cash_col] / 10.0
+                        grouped = temp.groupby("year", as_index=False)["div_per_share"].sum()
+                        for row in grouped.itertuples(index=False):
+                            annual_div[int(row.year)] = float(row.div_per_share)
+
+        return annual_div
+
+    @staticmethod
+    def _fetch_annual_eps(symbol: str) -> Dict[int, float]:
+        stock_code = StockData._to_tencent_code(symbol)
+        df = ak.stock_financial_report_sina(stock=stock_code, symbol="利润表")
+        if df is None or df.empty:
+            raise RuntimeError("利润表为空")
+
+        date_col = StockData._resolve_column(df, ["报告日"])
+        eps_col = StockData._resolve_column(df, ["基本每股收益", "基本每股收益(元/股)", "一、基本每股收益"])
+
+        temp = df[[date_col, eps_col]].copy()
+        temp[date_col] = pd.to_datetime(temp[date_col], errors="coerce")
+        temp[eps_col] = pd.to_numeric(temp[eps_col], errors="coerce")
+        temp = temp.dropna(subset=[date_col, eps_col])
+        temp["year"] = temp[date_col].dt.year.astype(int)
+        temp["month"] = temp[date_col].dt.month.astype(int)
+
+        annual_pref = temp[temp["month"] == 12].copy()
+        if annual_pref.empty:
+            annual_pref = temp.copy()
+        annual_pref = annual_pref.sort_values(date_col).drop_duplicates(subset=["year"], keep="last")
+
+        eps_map: Dict[int, float] = {}
+        for row in annual_pref.itertuples(index=False):
+            eps_map[int(getattr(row, "year"))] = float(getattr(row, eps_col))
+        return eps_map
+
+    @staticmethod
+    def _calc_dividend_quality_score(symbol: str) -> Tuple[float, Dict[str, object]]:
+        div_map = StockData._fetch_annual_dividend_per_share(symbol)
+        if not div_map:
+            raise RuntimeError("未拿到分红数据")
+
+        eps_map = StockData._fetch_annual_eps(symbol)
+        all_div_years = sorted(div_map.keys())
+
+        def _payout_ratio_for_year(y: int) -> Optional[float]:
+            dps = float(div_map.get(y, 0.0))
+            eps = eps_map.get(y)
+            if eps is None or eps <= 0:
+                return None
+            return float(dps / eps * 100.0)
+
+        years_with_valid_payout = [y for y in all_div_years if _payout_ratio_for_year(y) is not None]
+        latest_year = max(years_with_valid_payout) if years_with_valid_payout else max(all_div_years)
+
+        earliest_year = min(all_div_years)
+        start_year = max(earliest_year, latest_year - 9)
+        years_used = list(range(start_year, latest_year + 1))
+        if not years_used:
+            raise RuntimeError("没有可用于计算的年度分红数据")
+
+        missing_years = [y for y in years_used if y not in div_map]
+        div_series = np.array([float(div_map.get(y, 0.0)) for y in years_used], dtype=float)
+        payout_ratios = [_payout_ratio_for_year(y) for y in years_used]
+
+        avg = float(np.mean(div_series))
+        std = float(np.std(div_series, ddof=0))
+        if avg <= 0:
+            stability_score = 0.0
+            cv = np.inf
+        else:
+            cv = std / avg
+            if cv <= 0.20:
+                stability_score = 100.0
+            elif cv >= 1.00:
+                stability_score = 0.0
+            else:
+                stability_score = (1.0 - (cv - 0.20) / 0.80) * 100.0
+
+        n = len(div_series)
+        if n <= 1:
+            growth_score = 50.0
+            g = 0.0
+            avg_old = float(div_series[0]) if n == 1 else 0.0
+            avg_new = avg_old
+            old_n = n
+            new_n = n
+        else:
+            split = n // 2
+            old_part = div_series[:split]
+            new_part = div_series[split:]
+            avg_old = float(np.mean(old_part))
+            avg_new = float(np.mean(new_part))
+            old_n = len(old_part)
+            new_n = len(new_part)
+
+            if avg_old <= 0:
+                g = 1.0 if avg_new > 0 else 0.0
+            else:
+                g = (avg_new - avg_old) / avg_old
+
+            if g <= -0.30:
+                growth_score = 0.0
+            elif g >= 0.50:
+                growth_score = 100.0
+            else:
+                growth_score = ((g + 0.30) / 0.80) * 100.0
+
+        n_over = 0
+        for p in payout_ratios:
+            if p is not None and p > 95.0:
+                n_over += 1
+        n_over += len(missing_years)
+        if n_over == 0:
+            payout_safety_score = 100.0
+        elif n_over == 1:
+            payout_safety_score = 70.0
+        elif n_over == 2:
+            payout_safety_score = 40.0
+        else:
+            payout_safety_score = 0.0
+
+        dividend_quality_score = (
+            stability_score * 0.40
+            + growth_score * 0.30
+            + payout_safety_score * 0.30
+        )
+
+        details: Dict[str, object] = {
+            "dividend_quality_score": round(float(dividend_quality_score), 4),
+            "dividend_quality_stability_score": round(float(stability_score), 4),
+            "dividend_quality_growth_score": round(float(growth_score), 4),
+            "dividend_quality_payout_safety_score": round(float(payout_safety_score), 4),
+            "dividend_quality_cv": None if not np.isfinite(cv) else round(float(cv), 6),
+            "dividend_quality_g": round(float(g), 6),
+            "dividend_quality_avg_old": round(float(avg_old), 6),
+            "dividend_quality_avg_new": round(float(avg_new), 6),
+            "dividend_quality_old_window_years": int(old_n),
+            "dividend_quality_new_window_years": int(new_n),
+            "dividend_quality_n_over_threshold_or_missing": int(n_over),
+            "dividend_quality_years_used": [int(y) for y in years_used],
+            "dividend_quality_missing_years": [int(y) for y in missing_years],
+        }
+        return round(float(dividend_quality_score), 4), details
+
+    @staticmethod
     def _fetch_annual_cash_dividend_total(symbol: str, total_shares_estimate: float) -> Dict[int, float]:
         annual_total: Dict[int, float] = {}
 
@@ -696,6 +879,21 @@ class StockData:
         is_financial = str(category).strip() == "金融"
         cash_score = np.nan
         cash_details: Dict[str, object] = {"cash_score": np.nan, "cash_score_enabled": False}
+        dividend_quality_score = 0.0
+        dividend_quality_details: Dict[str, object] = {"dividend_quality_score_enabled": True}
+
+        try:
+            dividend_quality_score, dq_details = StockData._calc_dividend_quality_score(symbol)
+            dividend_quality_details.update(dq_details)
+        except Exception as exc:
+            dividend_quality_score = 0.0
+            dividend_quality_details.update(
+                {
+                    "dividend_quality_score": 0.0,
+                    "dividend_quality_error": str(exc),
+                }
+            )
+
         if not is_financial:
             try:
                 cash_score, calc_details = StockData._fetch_cash_score(symbol)
@@ -720,6 +918,8 @@ class StockData:
             "current_price": current_price,
             "current_dividend_yield": current_dividend_yield,
             "dividend_extra": dividend_extra,
+            "dividend_quality_score": dividend_quality_score,
+            "dividend_quality_details": dividend_quality_details,
             "cash_score": cash_score,
             "cash_details": cash_details,
         }
