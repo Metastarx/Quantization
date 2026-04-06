@@ -1,0 +1,39 @@
+name: Daily Quant Run
+
+on:
+  workflow_dispatch:
+  schedule:
+    # 北京时间 09:30 开盘
+    - cron: '30 1 * * 1-5'
+    # 北京时间 11:25 午休前
+    - cron: '25 3 * * 1-5'
+    # 北京时间 13:05 下午开盘后
+    - cron: '5 5 * * 1-5'
+    # 北京时间 14:00 收盘前1小时
+    - cron: '0 6 * * 1-5'
+    # 北京时间 15:05 收盘后
+    - cron: '5 7 * * 1-5'
+
+jobs:
+  run-linux:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python 3.10
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Add conda to system path
+        run: echo $CONDA/bin >> $GITHUB_PATH
+
+      - name: Install dependencies
+        run: conda env update --file environment.yml --name base
+
+      - name: Run quant script
+        env:
+          TUSHARE_TOKEN: ${{ secrets.TUSHARE_TOKEN }}
+        run: |
+          python main.py
