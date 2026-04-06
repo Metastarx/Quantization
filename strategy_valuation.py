@@ -347,15 +347,17 @@ class StrategyValuation:
             total_score = base_total
             score_formula = "financial_base_formula"
         else:
+            weighted_roe = roe_score * 0.05
+            weighted_cash = (cash_score * 0.05) if pd.notna(cash_score) else 0.0
             total_score = (
                 valuation_score * 0.30
                 + dividend_score * 0.30
                 + price_position_score * 0.20
                 + position_score * 0.10
-                + roe_score * 0.05
-                + cash_score * 0.05 if pd.notna(cash_score) else 0.0
+                + weighted_roe
+                + weighted_cash
             )
-            
+
             score_formula = "non_financial_base_plus_roe0.5_cash0.5"
 
         details: Dict[str, float] = {}
