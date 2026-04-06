@@ -1,0 +1,264 @@
+{
+  "generated_at": "2026-04-06 14:02:45",
+  "total_records": 8,
+  "success_count": 8,
+  "fail_count": 0,
+  "records": [
+    {
+      "symbol": "600795",
+      "name": "国电电力",
+      "quantity": 0,
+      "current_price": 4.76,
+      "market_value": 0.0,
+      "position_weight": 0.0,
+      "total_score": 128.7785,
+      "score_summary": {
+        "valuation_score": 70.0327,
+        "dividend_spread_score": 47.8336,
+        "price_position_score": 78.4906,
+        "position_score": 100.0,
+        "roe_score": 48.7743,
+        "cash_score": 86.6667,
+        "category": "",
+        "is_financial": false,
+        "score_formula": "non_financial_base_plus_roe0.5_cash0.5",
+        "total_score": 128.7785
+      },
+      "raw_values": {
+        "current_price": 4.76,
+        "current_pb": 1.3868,
+        "current_pe_ttm": 11.4464,
+        "dividend_yield": 4.2017,
+        "dividend_spread": 2.3917,
+        "holding_position_weight_pct": 0.0,
+        "roe": 13.0081,
+        "cash_score": 86.6667,
+        "cash_fcf_yield_pct": 8.038332
+      }
+    },
+    {
+      "symbol": "600900",
+      "name": "长江电力",
+      "quantity": 100,
+      "current_price": 26.7,
+      "market_value": 2670.0,
+      "position_weight": 0.22828317373461013,
+      "total_score": 128.3389,
+      "score_summary": {
+        "valuation_score": 79.7123,
+        "dividend_spread_score": 34.4367,
+        "price_position_score": 55.187,
+        "position_score": 32.2335,
+        "roe_score": 69.927,
+        "cash_score": 89.7398,
+        "category": "",
+        "is_financial": false,
+        "score_formula": "non_financial_base_plus_roe0.5_cash0.5",
+        "total_score": 128.3389
+      },
+      "raw_values": {
+        "current_price": 26.7,
+        "current_pb": 2.9547,
+        "current_pe_ttm": 19.1208,
+        "dividend_yield": 3.5318,
+        "dividend_spread": 1.7218,
+        "holding_position_weight_pct": 22.8283,
+        "roe": 15.2482,
+        "cash_score": 89.7398,
+        "cash_fcf_yield_pct": 5.947954
+      }
+    },
+    {
+      "symbol": "600023",
+      "name": "浙能电力",
+      "quantity": 200,
+      "current_price": 5.41,
+      "market_value": 1082.0,
+      "position_weight": 0.09251025991792065,
+      "total_score": 122.3981,
+      "score_summary": {
+        "valuation_score": 46.3945,
+        "dividend_spread_score": 71.0089,
+        "price_position_score": 37.4242,
+        "position_score": 72.5381,
+        "roe_score": 45.4773,
+        "cash_score": 99.3995,
+        "category": "",
+        "is_financial": false,
+        "score_formula": "non_financial_base_plus_roe0.5_cash0.5",
+        "total_score": 122.3981
+      },
+      "raw_values": {
+        "current_price": 5.41,
+        "current_pb": 0.9664,
+        "current_pe_ttm": 9.9541,
+        "dividend_yield": 5.3604,
+        "dividend_spread": 3.5504,
+        "holding_position_weight_pct": 9.251,
+        "roe": 9.8068,
+        "cash_score": 99.3995,
+        "cash_fcf_yield_pct": 7.87991
+      }
+    },
+    {
+      "symbol": "600886",
+      "name": "国投电力",
+      "quantity": 100,
+      "current_price": 13.85,
+      "market_value": 1385.0,
+      "position_weight": 0.11841655266757865,
+      "total_score": 112.6757,
+      "score_summary": {
+        "valuation_score": 68.3777,
+        "dividend_spread_score": 29.7206,
+        "price_position_score": 55.1379,
+        "position_score": 64.8477,
+        "roe_score": 42.4671,
+        "cash_score": 89.0006,
+        "category": "",
+        "is_financial": false,
+        "score_formula": "non_financial_base_plus_roe0.5_cash0.5",
+        "total_score": 112.6757
+      },
+      "raw_values": {
+        "current_price": 13.85,
+        "current_pb": 1.6728,
+        "current_pe_ttm": 16.8426,
+        "dividend_yield": 3.296,
+        "dividend_spread": 1.486,
+        "holding_position_weight_pct": 11.8417,
+        "roe": 9.9319,
+        "cash_score": 89.0006,
+        "cash_fcf_yield_pct": 5.800124
+      }
+    },
+    {
+      "symbol": "601166",
+      "name": "兴业银行",
+      "quantity": 100,
+      "current_price": 18.69,
+      "market_value": 1869.0000000000002,
+      "position_weight": 0.1597982216142271,
+      "total_score": 68.6175,
+      "score_summary": {
+        "valuation_score": 70.4476,
+        "dividend_spread_score": 77.2296,
+        "price_position_score": 74.8725,
+        "position_score": 52.5635,
+        "roe_score": 40.8352,
+        "cash_score": NaN,
+        "category": "金融",
+        "is_financial": true,
+        "score_formula": "financial_base_formula",
+        "total_score": 68.6175
+      },
+      "raw_values": {
+        "current_price": 18.69,
+        "current_pb": 0.4829,
+        "current_pe_ttm": 5.1057,
+        "dividend_yield": 5.6715,
+        "dividend_spread": 3.8615,
+        "holding_position_weight_pct": 15.9798,
+        "roe": 8.6867,
+        "cash_score": NaN,
+        "cash_fcf_yield_pct": null
+      }
+    },
+    {
+      "symbol": "600036",
+      "name": "招商银行",
+      "quantity": 100,
+      "current_price": 39.4,
+      "market_value": 3940.0,
+      "position_weight": 0.3368673050615595,
+      "total_score": 57.1884,
+      "score_summary": {
+        "valuation_score": 68.5417,
+        "dividend_spread_score": 65.3228,
+        "price_position_score": 60.8007,
+        "position_score": 0.0,
+        "roe_score": 48.6888,
+        "cash_score": NaN,
+        "category": "金融",
+        "is_financial": true,
+        "score_formula": "financial_base_formula",
+        "total_score": 57.1884
+      },
+      "raw_values": {
+        "current_price": 39.4,
+        "current_pb": 0.9071,
+        "current_pe_ttm": 6.6164,
+        "dividend_yield": 5.0761,
+        "dividend_spread": 3.2661,
+        "holding_position_weight_pct": 33.6867,
+        "roe": 12.0198,
+        "cash_score": NaN,
+        "cash_fcf_yield_pct": null
+      }
+    },
+    {
+      "symbol": "600919",
+      "name": "江苏银行",
+      "quantity": 0,
+      "current_price": 10.81,
+      "market_value": 0.0,
+      "position_weight": 0.0,
+      "total_score": 45.0336,
+      "score_summary": {
+        "valuation_score": 26.1332,
+        "dividend_spread_score": 60.1182,
+        "price_position_score": 22.1694,
+        "position_score": 100.0,
+        "roe_score": 47.2434,
+        "cash_score": NaN,
+        "category": "金融",
+        "is_financial": true,
+        "score_formula": "financial_base_formula",
+        "total_score": 45.0336
+      },
+      "raw_values": {
+        "current_price": 10.81,
+        "current_pb": 0.7776,
+        "current_pe_ttm": 5.802,
+        "dividend_yield": 4.8159,
+        "dividend_spread": 3.0059,
+        "holding_position_weight_pct": 0.0,
+        "roe": 10.8586,
+        "cash_score": NaN,
+        "cash_fcf_yield_pct": null
+      }
+    },
+    {
+      "symbol": "601398",
+      "name": "工商银行",
+      "quantity": 100,
+      "current_price": 7.5,
+      "market_value": 750.0,
+      "position_weight": 0.06412448700410396,
+      "total_score": 44.3545,
+      "score_summary": {
+        "valuation_score": 28.5439,
+        "dividend_spread_score": 45.9333,
+        "price_position_score": 48.3209,
+        "position_score": 80.9645,
+        "roe_score": 42.5072,
+        "cash_score": NaN,
+        "category": "金融",
+        "is_financial": true,
+        "score_formula": "financial_base_formula",
+        "total_score": 44.3545
+      },
+      "raw_values": {
+        "current_price": 7.5,
+        "current_pb": 0.6926,
+        "current_pe_ttm": 7.2526,
+        "dividend_yield": 4.1067,
+        "dividend_spread": 2.2967,
+        "holding_position_weight_pct": 6.4124,
+        "roe": 8.9739,
+        "cash_score": NaN,
+        "cash_fcf_yield_pct": null
+      }
+    }
+  ]
+}

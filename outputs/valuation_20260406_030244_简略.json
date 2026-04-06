@@ -1,0 +1,944 @@
+{
+  "generated_at": "2026-04-06 03:02:44",
+  "total_records": 36,
+  "success_count": 36,
+  "fail_count": 0,
+  "records": [
+    {
+      "symbol": "002867",
+      "name": "周大生",
+      "quantity": 0,
+      "current_price": 11.72,
+      "market_value": 0.0,
+      "position_weight": 0.0,
+      "total_score": 90.7247,
+      "score_summary": {
+        "valuation_score": 91.1439,
+        "dividend_spread_score": 100.0,
+        "price_position_score": 86.647,
+        "position_score": 100.0,
+        "roe_score": 60.5211,
+        "total_score": 90.7247
+      },
+      "raw_values": {
+        "current_price": 11.72,
+        "current_pb": 2.032,
+        "current_pe_ttm": 12.2698,
+        "dividend_yield": 8.1058,
+        "dividend_spread": 6.2958,
+        "holding_position_weight_pct": 0.0,
+        "roe": 16.2516
+      }
+    },
+    {
+      "symbol": "002027",
+      "name": "fz传媒",
+      "quantity": 100,
+      "current_price": 6.33,
+      "market_value": 633.0,
+      "position_weight": 0.011517257691817835,
+      "total_score": 84.116,
+      "score_summary": {
+        "valuation_score": 83.7403,
+        "dividend_spread_score": 68.0654,
+        "price_position_score": 96.798,
+        "position_score": 94.4716,
+        "roe_score": 97.6752,
+        "total_score": 84.116
+      },
+      "raw_values": {
+        "current_price": 6.33,
+        "current_pb": 5.5515,
+        "current_pe_ttm": 16.8427,
+        "dividend_yield": 5.2133,
+        "dividend_spread": 3.4033,
+        "holding_position_weight_pct": 1.1517,
+        "roe": 31.3173
+      }
+    },
+    {
+      "symbol": "600690",
+      "name": "海尔智家",
+      "quantity": 200,
+      "current_price": 21.15,
+      "market_value": 4230.0,
+      "position_weight": 0.0769636651443751,
+      "total_score": 80.0821,
+      "score_summary": {
+        "valuation_score": 99.8131,
+        "dividend_spread_score": 55.0567,
+        "price_position_score": 99.7096,
+        "position_score": 63.0568,
+        "roe_score": 73.7352,
+        "total_score": 80.0821
+      },
+      "raw_values": {
+        "current_price": 21.15,
+        "current_pb": 1.6709,
+        "current_pe_ttm": 10.1437,
+        "dividend_yield": 4.5628,
+        "dividend_spread": 2.7528,
+        "holding_position_weight_pct": 7.6964,
+        "roe": 16.9977
+      }
+    },
+    {
+      "symbol": "600612",
+      "name": "老凤祥",
+      "quantity": 0,
+      "current_price": 41.14,
+      "market_value": 0.0,
+      "position_weight": 0.0,
+      "total_score": 74.2895,
+      "score_summary": {
+        "valuation_score": 95.4714,
+        "dividend_spread_score": 47.4169,
+        "price_position_score": 84.9243,
+        "position_score": 100.0,
+        "roe_score": 44.3817,
+        "total_score": 74.2895
+      },
+      "raw_values": {
+        "current_price": 41.14,
+        "current_pb": 1.6734,
+        "current_pe_ttm": 12.263,
+        "dividend_yield": 4.1808,
+        "dividend_spread": 2.3708,
+        "holding_position_weight_pct": 0.0,
+        "roe": 12.6805
+      }
+    },
+    {
+      "symbol": "000999",
+      "name": "华润三九",
+      "quantity": 0,
+      "current_price": 28.14,
+      "market_value": 0.0,
+      "position_weight": 0.0,
+      "total_score": 72.5712,
+      "score_summary": {
+        "valuation_score": 96.2034,
+        "dividend_spread_score": 34.8732,
+        "price_position_score": 81.1155,
+        "position_score": 100.0,
+        "roe_score": 70.2508,
+        "total_score": 72.5712
+      },
+      "raw_values": {
+        "current_price": 28.14,
+        "current_pb": 2.1122,
+        "current_pe_ttm": 13.6893,
+        "dividend_yield": 3.5537,
+        "dividend_spread": 1.7437,
+        "holding_position_weight_pct": 0.0,
+        "roe": 16.2615
+      }
+    },
+    {
+      "symbol": "601166",
+      "name": "兴业银行",
+      "quantity": 100,
+      "current_price": 18.69,
+      "market_value": 1869.0000000000002,
+      "position_weight": 0.034005931478684887,
+      "total_score": 71.7289,
+      "score_summary": {
+        "valuation_score": 70.4476,
+        "dividend_spread_score": 77.2296,
+        "price_position_score": 74.8725,
+        "position_score": 83.6769,
+        "roe_score": 40.8352,
+        "total_score": 71.7289
+      },
+      "raw_values": {
+        "current_price": 18.69,
+        "current_pb": 0.4829,
+        "current_pe_ttm": 5.1057,
+        "dividend_yield": 5.6715,
+        "dividend_spread": 3.8615,
+        "holding_position_weight_pct": 3.4006,
+        "roe": 8.6867
+      }
+    },
+    {
+      "symbol": "601668",
+      "name": "中国建筑",
+      "quantity": 400,
+      "current_price": 5.0,
+      "market_value": 2000.0,
+      "position_weight": 0.03638943978457452,
+      "total_score": 70.9497,
+      "score_summary": {
+        "valuation_score": 75.8852,
+        "dividend_spread_score": 72.4,
+        "price_position_score": 73.2566,
+        "position_score": 82.5328,
+        "roe_score": 35.5949,
+        "total_score": 70.9497
+      },
+      "raw_values": {
+        "current_price": 5.0,
+        "current_pb": 0.4285,
+        "current_pe_ttm": 4.6254,
+        "dividend_yield": 5.43,
+        "dividend_spread": 3.62,
+        "holding_position_weight_pct": 3.6389,
+        "roe": 9.4077
+      }
+    },
+    {
+      "symbol": "600941",
+      "name": "中国移动",
+      "quantity": 100,
+      "current_price": 93.02,
+      "market_value": 9302.0,
+      "position_weight": 0.1692472844380561,
+      "total_score": 70.0024,
+      "score_summary": {
+        "valuation_score": 86.0332,
+        "dividend_spread_score": 64.2193,
+        "price_position_score": 91.1918,
+        "position_score": 18.7598,
+        "roe_score": 48.1232,
+        "total_score": 70.0024
+      },
+      "raw_values": {
+        "current_price": 93.02,
+        "current_pb": 1.4458,
+        "current_pe_ttm": 14.6924,
+        "dividend_yield": 5.021,
+        "dividend_spread": 3.211,
+        "holding_position_weight_pct": 16.9247,
+        "roe": 9.9709
+      }
+    },
+    {
+      "symbol": "600377",
+      "name": "宁沪高速",
+      "quantity": 100,
+      "current_price": 11.69,
+      "market_value": 1169.0,
+      "position_weight": 0.021269627554083806,
+      "total_score": 69.3331,
+      "score_summary": {
+        "valuation_score": 77.9794,
+        "dividend_spread_score": 47.6323,
+        "price_position_score": 90.8396,
+        "position_score": 89.7904,
+        "roe_score": 45.0258,
+        "total_score": 69.3331
+      },
+      "raw_values": {
+        "current_price": 11.69,
+        "current_pb": 1.421,
+        "current_pe_ttm": 12.8195,
+        "dividend_yield": 4.1916,
+        "dividend_spread": 2.3816,
+        "holding_position_weight_pct": 2.127,
+        "roe": 11.479
+      }
+    },
+    {
+      "symbol": "601928",
+      "name": "凤凰传媒",
+      "quantity": 0,
+      "current_price": 9.75,
+      "market_value": 0.0,
+      "position_weight": 0.0,
+      "total_score": 69.1761,
+      "score_summary": {
+        "valuation_score": 69.4286,
+        "dividend_spread_score": 66.3641,
+        "price_position_score": 73.3847,
+        "position_score": 100.0,
+        "roe_score": 37.6139,
+        "total_score": 69.1761
+      },
+      "raw_values": {
+        "current_price": 9.75,
+        "current_pb": 1.2351,
+        "current_pe_ttm": 12.6891,
+        "dividend_yield": 5.1282,
+        "dividend_spread": 3.3182,
+        "holding_position_weight_pct": 0.0,
+        "roe": 9.8634
+      }
+    },
+    {
+      "symbol": "600887",
+      "name": "伊利股份",
+      "quantity": 100,
+      "current_price": 26.31,
+      "market_value": 2631.0,
+      "position_weight": 0.04787030803660778,
+      "total_score": 66.2399,
+      "score_summary": {
+        "valuation_score": 71.2704,
+        "dividend_spread_score": 56.5404,
+        "price_position_score": 74.2855,
+        "position_score": 77.0218,
+        "roe_score": 53.3737,
+        "total_score": 66.2399
+      },
+      "raw_values": {
+        "current_price": 26.31,
+        "current_pb": 2.9554,
+        "current_pe_ttm": 20.7753,
+        "dividend_yield": 4.637,
+        "dividend_spread": 2.827,
+        "holding_position_weight_pct": 4.787,
+        "roe": 15.0832
+      }
+    },
+    {
+      "symbol": "600795",
+      "name": "国电电力",
+      "quantity": 0,
+      "current_price": 4.76,
+      "market_value": 0.0,
+      "position_weight": 0.0,
+      "total_score": 65.9354,
+      "score_summary": {
+        "valuation_score": 70.0327,
+        "dividend_spread_score": 47.8336,
+        "price_position_score": 78.4906,
+        "position_score": 100.0,
+        "roe_score": 48.7743,
+        "total_score": 65.9354
+      },
+      "raw_values": {
+        "current_price": 4.76,
+        "current_pb": 1.3868,
+        "current_pe_ttm": 11.4464,
+        "dividend_yield": 4.2017,
+        "dividend_spread": 2.3917,
+        "holding_position_weight_pct": 0.0,
+        "roe": 13.0081
+      }
+    },
+    {
+      "symbol": "601766",
+      "name": "中国中车",
+      "quantity": 200,
+      "current_price": 6.21,
+      "market_value": 1242.0,
+      "position_weight": 0.022597842106220775,
+      "total_score": 65.2557,
+      "score_summary": {
+        "valuation_score": 83.5236,
+        "dividend_spread_score": 31.4329,
+        "price_position_score": 87.5581,
+        "position_score": 89.1528,
+        "roe_score": 43.4189,
+        "total_score": 65.2557
+      },
+      "raw_values": {
+        "current_price": 6.21,
+        "current_pb": 1.0354,
+        "current_pe_ttm": 13.521,
+        "dividend_yield": 3.3816,
+        "dividend_spread": 1.5716,
+        "holding_position_weight_pct": 2.2598,
+        "roe": 7.7332
+      }
+    },
+    {
+      "symbol": "002555",
+      "name": "三七互娱",
+      "quantity": 0,
+      "current_price": 21.72,
+      "market_value": 0.0,
+      "position_weight": 0.0,
+      "total_score": 64.7085,
+      "score_summary": {
+        "valuation_score": 44.006,
+        "dividend_spread_score": 55.881,
+        "price_position_score": 74.8857,
+        "position_score": 100.0,
+        "roe_score": 97.6527,
+        "total_score": 64.7085
+      },
+      "raw_values": {
+        "current_price": 21.72,
+        "current_pb": 3.5703,
+        "current_pe_ttm": 15.3993,
+        "dividend_yield": 4.6041,
+        "dividend_spread": 2.7941,
+        "holding_position_weight_pct": 0.0,
+        "roe": 23.6419
+      }
+    },
+    {
+      "symbol": "600398",
+      "name": "海澜之家",
+      "quantity": 0,
+      "current_price": 6.48,
+      "market_value": 0.0,
+      "position_weight": 0.0,
+      "total_score": 64.4266,
+      "score_summary": {
+        "valuation_score": 54.8313,
+        "dividend_spread_score": 90.3432,
+        "price_position_score": 32.916,
+        "position_score": 100.0,
+        "roe_score": 42.9107,
+        "total_score": 64.4266
+      },
+      "raw_values": {
+        "current_price": 6.48,
+        "current_pb": 1.6986,
+        "current_pe_ttm": 14.3685,
+        "dividend_yield": 6.3272,
+        "dividend_spread": 4.5172,
+        "holding_position_weight_pct": 0.0,
+        "roe": 12.2602
+      }
+    },
+    {
+      "symbol": "600036",
+      "name": "招商银行",
+      "quantity": 100,
+      "current_price": 39.4,
+      "market_value": 3940.0,
+      "position_weight": 0.0716871963756118,
+      "total_score": 63.7473,
+      "score_summary": {
+        "valuation_score": 68.5417,
+        "dividend_spread_score": 65.3228,
+        "price_position_score": 60.8007,
+        "position_score": 65.5895,
+        "roe_score": 48.6888,
+        "total_score": 63.7473
+      },
+      "raw_values": {
+        "current_price": 39.4,
+        "current_pb": 0.9071,
+        "current_pe_ttm": 6.6164,
+        "dividend_yield": 5.0761,
+        "dividend_spread": 3.2661,
+        "holding_position_weight_pct": 7.1687,
+        "roe": 12.0198
+      }
+    },
+    {
+      "symbol": "600600",
+      "name": "青岛啤酒",
+      "quantity": 0,
+      "current_price": 63.11,
+      "market_value": 0.0,
+      "position_weight": 0.0,
+      "total_score": 63.1189,
+      "score_summary": {
+        "valuation_score": 82.9309,
+        "dividend_spread_score": 33.5195,
+        "price_position_score": 57.479,
+        "position_score": 100.0,
+        "roe_score": 66.8794,
+        "total_score": 63.1189
+      },
+      "raw_values": {
+        "current_price": 63.11,
+        "current_pb": 2.809,
+        "current_pe_ttm": 18.7647,
+        "dividend_yield": 3.486,
+        "dividend_spread": 1.676,
+        "holding_position_weight_pct": 0.0,
+        "roe": 15.3681
+      }
+    },
+    {
+      "symbol": "000333",
+      "name": "美的集团",
+      "quantity": 0,
+      "current_price": 76.35,
+      "market_value": 0.0,
+      "position_weight": 0.0,
+      "total_score": 62.6542,
+      "score_summary": {
+        "valuation_score": 59.2541,
+        "dividend_spread_score": 55.483,
+        "price_position_score": 51.7092,
+        "position_score": 100.0,
+        "roe_score": 78.9123,
+        "total_score": 62.6542
+      },
+      "raw_values": {
+        "current_price": 76.35,
+        "current_pb": 2.6007,
+        "current_pe_ttm": 13.2105,
+        "dividend_yield": 4.5842,
+        "dividend_spread": 2.7742,
+        "holding_position_weight_pct": 0.0,
+        "roe": 19.9765
+      }
+    },
+    {
+      "symbol": "601318",
+      "name": "中国平安",
+      "quantity": 200,
+      "current_price": 57.25,
+      "market_value": 11450.0,
+      "position_weight": 0.2083295427666891,
+      "total_score": 60.7665,
+      "score_summary": {
+        "valuation_score": 69.4224,
+        "dividend_spread_score": 52.883,
+        "price_position_score": 82.989,
+        "position_score": 0.0,
+        "roe_score": 74.7704,
+        "total_score": 60.7665
+      },
+      "raw_values": {
+        "current_price": 57.25,
+        "current_pb": 1.0362,
+        "current_pe_ttm": 7.6916,
+        "dividend_yield": 4.4541,
+        "dividend_spread": 2.6441,
+        "holding_position_weight_pct": 20.833,
+        "roe": 13.9737
+      }
+    },
+    {
+      "symbol": "600900",
+      "name": "长江电力",
+      "quantity": 100,
+      "current_price": 26.7,
+      "market_value": 2670.0,
+      "position_weight": 0.04857990211240698,
+      "total_score": 59.9429,
+      "score_summary": {
+        "valuation_score": 79.7123,
+        "dividend_spread_score": 34.4367,
+        "price_position_score": 55.187,
+        "position_score": 76.6812,
+        "roe_score": 69.927,
+        "total_score": 59.9429
+      },
+      "raw_values": {
+        "current_price": 26.7,
+        "current_pb": 2.9547,
+        "current_pe_ttm": 19.1208,
+        "dividend_yield": 3.5318,
+        "dividend_spread": 1.7218,
+        "holding_position_weight_pct": 4.858,
+        "roe": 15.2482
+      }
+    },
+    {
+      "symbol": "603565",
+      "name": "中谷物流",
+      "quantity": 0,
+      "current_price": 11.41,
+      "market_value": 0.0,
+      "position_weight": 0.0,
+      "total_score": 59.0894,
+      "score_summary": {
+        "valuation_score": 20.8358,
+        "dividend_spread_score": 100.0,
+        "price_position_score": 15.091,
+        "position_score": 100.0,
+        "roe_score": 98.2047,
+        "total_score": 59.0894
+      },
+      "raw_values": {
+        "current_price": 11.41,
+        "current_pb": 2.4254,
+        "current_pe_ttm": 11.2123,
+        "dividend_yield": 6.9238,
+        "dividend_spread": 5.1138,
+        "holding_position_weight_pct": 0.0,
+        "roe": 19.7932
+      }
+    },
+    {
+      "symbol": "600660",
+      "name": "福耀玻璃",
+      "quantity": 100,
+      "current_price": 58.09,
+      "market_value": 5809.0,
+      "position_weight": 0.10569312785429669,
+      "total_score": 58.567,
+      "score_summary": {
+        "valuation_score": 71.4025,
+        "dividend_spread_score": 25.7728,
+        "price_position_score": 72.4389,
+        "position_score": 49.2664,
+        "roe_score": 100.0,
+        "total_score": 58.567
+      },
+      "raw_values": {
+        "current_price": 58.09,
+        "current_pb": 4.0366,
+        "current_pe_ttm": 16.2795,
+        "dividend_yield": 3.0986,
+        "dividend_spread": 1.2886,
+        "holding_position_weight_pct": 10.5693,
+        "roe": 25.4258
+      }
+    },
+    {
+      "symbol": "000538",
+      "name": "云南白药",
+      "quantity": 0,
+      "current_price": 56.46,
+      "market_value": 0.0,
+      "position_weight": 0.0,
+      "total_score": 57.4844,
+      "score_summary": {
+        "valuation_score": 58.9194,
+        "dividend_spread_score": 48.7451,
+        "price_position_score": 41.0314,
+        "position_score": 100.0,
+        "roe_score": 69.7881,
+        "total_score": 57.4844
+      },
+      "raw_values": {
+        "current_price": 56.46,
+        "current_pb": 2.5157,
+        "current_pe_ttm": 19.5478,
+        "dividend_yield": 4.2473,
+        "dividend_spread": 2.4373,
+        "holding_position_weight_pct": 0.0,
+        "roe": 13.0673
+      }
+    },
+    {
+      "symbol": "600737",
+      "name": "中粮糖业",
+      "quantity": 0,
+      "current_price": 14.2,
+      "market_value": 0.0,
+      "position_weight": 0.0,
+      "total_score": 56.7653,
+      "score_summary": {
+        "valuation_score": 36.2132,
+        "dividend_spread_score": 49.7155,
+        "price_position_score": 84.46,
+        "position_score": 100.0,
+        "roe_score": 40.9472,
+        "total_score": 56.7653
+      },
+      "raw_values": {
+        "current_price": 14.2,
+        "current_pb": 2.6931,
+        "current_pe_ttm": 22.2288,
+        "dividend_yield": 4.2958,
+        "dividend_spread": 2.4858,
+        "holding_position_weight_pct": 0.0,
+        "roe": 11.6992
+      }
+    },
+    {
+      "symbol": "600023",
+      "name": "浙能电力",
+      "quantity": 200,
+      "current_price": 5.41,
+      "market_value": 1082.0,
+      "position_weight": 0.019686686923454814,
+      "total_score": 56.3086,
+      "score_summary": {
+        "valuation_score": 46.3945,
+        "dividend_spread_score": 71.0089,
+        "price_position_score": 37.4242,
+        "position_score": 90.5502,
+        "roe_score": 45.4773,
+        "total_score": 56.3086
+      },
+      "raw_values": {
+        "current_price": 5.41,
+        "current_pb": 0.9664,
+        "current_pe_ttm": 9.9541,
+        "dividend_yield": 5.3604,
+        "dividend_spread": 3.5504,
+        "holding_position_weight_pct": 1.9687,
+        "roe": 9.8068
+      }
+    },
+    {
+      "symbol": "600886",
+      "name": "国投电力",
+      "quantity": 100,
+      "current_price": 13.85,
+      "market_value": 1385.0,
+      "position_weight": 0.025199687050817852,
+      "total_score": 53.4942,
+      "score_summary": {
+        "valuation_score": 68.3777,
+        "dividend_spread_score": 29.7206,
+        "price_position_score": 55.1379,
+        "position_score": 87.9039,
+        "roe_score": 42.4671,
+        "total_score": 53.4942
+      },
+      "raw_values": {
+        "current_price": 13.85,
+        "current_pb": 1.6728,
+        "current_pe_ttm": 16.8426,
+        "dividend_yield": 3.296,
+        "dividend_spread": 1.486,
+        "holding_position_weight_pct": 2.52,
+        "roe": 9.9319
+      }
+    },
+    {
+      "symbol": "000895",
+      "name": "双汇发展",
+      "quantity": 0,
+      "current_price": 27.91,
+      "market_value": 0.0,
+      "position_weight": 0.0,
+      "total_score": 49.458,
+      "score_summary": {
+        "valuation_score": 22.6165,
+        "dividend_spread_score": 64.8391,
+        "price_position_score": 22.8357,
+        "position_score": 100.0,
+        "roe_score": 86.542,
+        "total_score": 49.458
+      },
+      "raw_values": {
+        "current_price": 27.91,
+        "current_pb": 4.5266,
+        "current_pe_ttm": 18.9434,
+        "dividend_yield": 5.052,
+        "dividend_spread": 3.242,
+        "holding_position_weight_pct": 0.0,
+        "roe": 24.0324
+      }
+    },
+    {
+      "symbol": "603156",
+      "name": "养元饮品",
+      "quantity": 0,
+      "current_price": 29.9,
+      "market_value": 0.0,
+      "position_weight": 0.0,
+      "total_score": 48.42,
+      "score_summary": {
+        "valuation_score": 11.1482,
+        "dividend_spread_score": 54.7699,
+        "price_position_score": 52.7997,
+        "position_score": 100.0,
+        "roe_score": 80.8467,
+        "total_score": 48.42
+      },
+      "raw_values": {
+        "current_price": 29.9,
+        "current_pb": 4.1922,
+        "current_pe_ttm": 23.3761,
+        "dividend_yield": 4.5485,
+        "dividend_spread": 2.7385,
+        "holding_position_weight_pct": 0.0,
+        "roe": 16.3802
+      }
+    },
+    {
+      "symbol": "601398",
+      "name": "工商银行",
+      "quantity": 100,
+      "current_price": 7.5,
+      "market_value": 750.0,
+      "position_weight": 0.013646039919215444,
+      "total_score": 45.603,
+      "score_summary": {
+        "valuation_score": 28.5439,
+        "dividend_spread_score": 45.9333,
+        "price_position_score": 48.3209,
+        "position_score": 93.4498,
+        "roe_score": 42.5072,
+        "total_score": 45.603
+      },
+      "raw_values": {
+        "current_price": 7.5,
+        "current_pb": 0.6926,
+        "current_pe_ttm": 7.2526,
+        "dividend_yield": 4.1067,
+        "dividend_spread": 2.2967,
+        "holding_position_weight_pct": 1.3646,
+        "roe": 8.9739
+      }
+    },
+    {
+      "symbol": "600919",
+      "name": "江苏银行",
+      "quantity": 0,
+      "current_price": 10.81,
+      "market_value": 0.0,
+      "position_weight": 0.0,
+      "total_score": 45.0336,
+      "score_summary": {
+        "valuation_score": 26.1332,
+        "dividend_spread_score": 60.1182,
+        "price_position_score": 22.1694,
+        "position_score": 100.0,
+        "roe_score": 47.2434,
+        "total_score": 45.0336
+      },
+      "raw_values": {
+        "current_price": 10.81,
+        "current_pb": 0.7776,
+        "current_pe_ttm": 5.802,
+        "dividend_yield": 4.8159,
+        "dividend_spread": 3.0059,
+        "holding_position_weight_pct": 0.0,
+        "roe": 10.8586
+      }
+    },
+    {
+      "symbol": "601899",
+      "name": "紫金矿业",
+      "quantity": 0,
+      "current_price": 32.91,
+      "market_value": 0.0,
+      "position_weight": 0.0,
+      "total_score": 42.9438,
+      "score_summary": {
+        "valuation_score": 33.9324,
+        "dividend_spread_score": 0.0,
+        "price_position_score": 63.8205,
+        "position_score": 100.0,
+        "roe_score": 100.0,
+        "total_score": 42.9438
+      },
+      "raw_values": {
+        "current_price": 32.91,
+        "current_pb": 4.7576,
+        "current_pe_ttm": 16.9012,
+        "dividend_yield": 1.1547,
+        "dividend_spread": -0.6553,
+        "holding_position_weight_pct": 0.0,
+        "roe": 31.8309
+      }
+    },
+    {
+      "symbol": "603288",
+      "name": "海天味业",
+      "quantity": 0,
+      "current_price": 41.69,
+      "market_value": 0.0,
+      "position_weight": 0.0,
+      "total_score": 40.1441,
+      "score_summary": {
+        "valuation_score": 67.0269,
+        "dividend_spread_score": 0.0,
+        "price_position_score": 12.1439,
+        "position_score": 100.0,
+        "roe_score": 76.0721,
+        "total_score": 40.1441
+      },
+      "raw_values": {
+        "current_price": 41.69,
+        "current_pb": 5.9029,
+        "current_pe_ttm": 34.6613,
+        "dividend_yield": 1.3432,
+        "dividend_spread": -0.4668,
+        "holding_position_weight_pct": 0.0,
+        "roe": 19.4904
+      }
+    },
+    {
+      "symbol": "601985",
+      "name": "中国核电",
+      "quantity": 100,
+      "current_price": 8.81,
+      "market_value": 881.0,
+      "position_weight": 0.016029548225105075,
+      "total_score": 38.5366,
+      "score_summary": {
+        "valuation_score": 40.6735,
+        "dividend_spread_score": 4.6627,
+        "price_position_score": 67.5615,
+        "position_score": 92.3057,
+        "roe_score": 21.9292,
+        "total_score": 38.5366
+      },
+      "raw_values": {
+        "current_price": 8.81,
+        "current_pb": 1.5678,
+        "current_pe_ttm": 23.0944,
+        "dividend_yield": 2.0431,
+        "dividend_spread": 0.2331,
+        "holding_position_weight_pct": 1.603,
+        "roe": 6.2655
+      }
+    },
+    {
+      "symbol": "601088",
+      "name": "中国神华",
+      "quantity": 0,
+      "current_price": 47.58,
+      "market_value": 0.0,
+      "position_weight": 0.0,
+      "total_score": 37.3951,
+      "score_summary": {
+        "valuation_score": 0.841,
+        "dividend_spread_score": 58.7979,
+        "price_position_score": 22.4309,
+        "position_score": 100.0,
+        "roe_score": 50.1722,
+        "total_score": 37.3951
+      },
+      "raw_values": {
+        "current_price": 47.58,
+        "current_pb": 2.4693,
+        "current_pe_ttm": 19.115,
+        "dividend_yield": 4.7499,
+        "dividend_spread": 2.9399,
+        "holding_position_weight_pct": 0.0,
+        "roe": 12.6437
+      }
+    },
+    {
+      "symbol": "600901",
+      "name": "江苏金租",
+      "quantity": 0,
+      "current_price": 6.7,
+      "market_value": 0.0,
+      "position_weight": 0.0,
+      "total_score": 30.8823,
+      "score_summary": {
+        "valuation_score": 1.2746,
+        "dividend_spread_score": 44.397,
+        "price_position_score": 9.6589,
+        "position_score": 100.0,
+        "roe_score": 52.4907,
+        "total_score": 30.8823
+      },
+      "raw_values": {
+        "current_price": 6.7,
+        "current_pb": 1.5516,
+        "current_pe_ttm": 12.2744,
+        "dividend_yield": 4.0299,
+        "dividend_spread": 2.2199,
+        "holding_position_weight_pct": 0.0,
+        "roe": 13.161
+      }
+    },
+    {
+      "symbol": "600938",
+      "name": "中国海油",
+      "quantity": 100,
+      "current_price": 39.18,
+      "market_value": 3918.0,
+      "position_weight": 0.07128691253798147,
+      "total_score": 28.2009,
+      "score_summary": {
+        "valuation_score": 4.6056,
+        "dividend_spread_score": 29.2206,
+        "price_position_score": 29.8127,
+        "position_score": 65.7817,
+        "roe_score": 55.1232,
+        "total_score": 28.2009
+      },
+      "raw_values": {
+        "current_price": 39.18,
+        "current_pb": 2.3198,
+        "current_pe_ttm": 15.2539,
+        "dividend_yield": 3.271,
+        "dividend_spread": 1.461,
+        "holding_position_weight_pct": 7.1287,
+        "roe": 15.7495
+      }
+    }
+  ]
+}
