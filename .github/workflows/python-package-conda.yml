@@ -3,9 +3,16 @@ name: Daily Quant Run
 on:
   workflow_dispatch:
   schedule:
-    - cron: '43 1 * * 1-5'   # 北京时间 09:43 启动
-    - cron: '33 3 * * 1-5'   # 北京时间 11:33 启动
-    - cron: '3 7 * * 1-5'    # 北京时间 15:03 启动
+    - cron: '43 9 * * 1-5'
+      timezone: 'Asia/Shanghai'
+    - cron: '33 11 * * 1-5'
+      timezone: 'Asia/Shanghai'
+    - cron: '3 15 * * 1-5'
+      timezone: 'Asia/Shanghai'
+  # schedule:
+  #   - cron: '43 1 * * 1-5'   # 北京时间 09:43 启动
+  #   - cron: '33 3 * * 1-5'   # 北京时间 11:33 启动
+  #   - cron: '3 7 * * 1-5'    # 北京时间 15:03 启动
 
 jobs:
   run-linux:
